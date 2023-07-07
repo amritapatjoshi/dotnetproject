@@ -1,120 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Web.Cors;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
-using Microsoft.PointOfService;
 using System.Net.Http;
-using Newtonsoft.Json;
-using Owin;
+using System.Configuration;
+
 namespace POSSignalRConsole
 {
+
     class Program
     {
-        //static var _hubContext;
-        static Scanner scanner;
+        static IHubContext context = GlobalHost.ConnectionManager.GetHubContext<PosHub>();
         private static readonly HttpClient client = new HttpClient();
+        public static string defaultSimulatorType="scan";
         static void Main(string[] args)
         {
 
-            string url = "http://localhost:6118";
+            string url = ConfigurationManager.AppSettings["SignalrUrl"]; ;
             using (WebApp.Start<Startup>(url))
             {
                 Console.WriteLine("The Server URL is: {0}", url);
-                StartScannerSimulator();
+                InvokeSimulator(defaultSimulatorType);
                 Console.ReadLine();
             }
         }
-
-        private static void StartScannerSimulator()
+      
+       public static void InvokeSimulator(Object obj)
         {
-
-            PosExplorer posExplorer = new PosExplorer();
-            var scannerDeviceInfo = posExplorer.GetDevices(DeviceType.Scanner)[0];
-
-            scanner = (Scanner)posExplorer.CreateInstance(scannerDeviceInfo);
-            scanner.Open();
-            scanner.Claim(1000);
-            scanner.DeviceEnabled = true;
-            scanner.DataEventEnabled = true;
-            scanner.DecodeData = true;
-            scanner.DataEvent += new DataEventHandler(Scanner_DataEvent);
-        }
-        private static string GetDeviceId()
-        {
-            string deviceId = Environment.MachineName;
-            return "1";
-        }
-        private static void Scanner_DataEvent(object sender, DataEventArgs e)
-        {
-            byte[] b = scanner.ScanData;
-            string deviceId = GetDeviceId();
-            string barcodeId = "";
-            b = scanner.ScanDataLabel;
-            for (int i = 0; i < b.Length; i++)
-                barcodeId += (char)b[i];
-
-            Console.WriteLine(barcodeId);
-            var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-            context.Clients.All.broadcastNotification(barcodeId, deviceId);
-            //postData(barcodeId);
-            scanner.DeviceEnabled = true;
-            scanner.DataEventEnabled = true;
-            scanner.DecodeData = true;
-        }
-        private async static void postData(string str)
-        {
-            var data = new
+            string data = (string)obj;
+            if (data == "scan")
             {
-                scandata = str
-            };
+               // BarcodeScanner barcodeScanner = new BarcodeScanner();
+                BarcodeScanner.Start();
+                BarcodeScanner.Scanned += BarcodeScanner_Scanned;
+            }
+            else if (data == "print")
+            {
+                ReceiptPrinter receiptPrinter = new ReceiptPrinter();
+                receiptPrinter.Start("Print data will go here");
 
-            var json = JsonConvert.SerializeObject(data);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+            else if (data == "pinpad")
+            {
+                PayPinpad payPinpad = new PayPinpad();
+                payPinpad.Start();
+                payPinpad.PinEntered += PayPinpad_PinEntered;
+            }
+            else
+            {
+                Console.WriteLine("Nothing Invoked");
+            }
 
-            HttpResponseMessage response = await client.PostAsync("http://localhost:3001/broadcast/t1", content);
 
-
-            //response.EnsureSuccessStatusCode();
-            //string responseBody = await response.Content.ReadAsStringAsync();
-
-            //Console.WriteLine(responseBody);
-
-            //scanner.Release();
-            //scanner.Close();
-            //scanner = null;
         }
 
-        private static void Timer1_Elapsed(object sender, ElapsedEventArgs e)
+        private async static void BarcodeScanner_Scanned(object sender, ScannedEventArgs e)
         {
-            Console.WriteLine("Message sent");
-            var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-            context.Clients.All.broadcastNotification("this is my message", "stop the chat");
+           await context.Clients.All.sendScannedData(e.BarcodeId, e.DeviceId);
         }
 
-    }
-
-    class Startup
-    {
-     
-        public void Configuration(IAppBuilder MyApp)
+        private async static void PayPinpad_PinEntered(object sender, PinEnteredEventArgs e)
         {
-            MyApp.UseCors(CorsOptions.AllowAll);
-            MyApp.MapSignalR();
+            await context.Clients.All.paymentComplete(e.DeviceId, e.AccountNumber,e.Ammount,e.PaymentStatus);
         }
     }
 
-    public class ChatHub : Hub
-    {
-        public void LetsChat(string Cl_Name, string Cl_Message)
-        {
-            Clients.All.NewMessage(Cl_Name, Cl_Message);
-        }
-    }
+    
+
+    
 }
