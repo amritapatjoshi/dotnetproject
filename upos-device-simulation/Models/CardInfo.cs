@@ -1,4 +1,4 @@
-﻿namespace upos_device_simulation
+﻿namespace upos_device_simulation.Models
 {
     public class CardInfo
     {

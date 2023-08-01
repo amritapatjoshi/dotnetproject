@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace upos_device_simulation
+﻿namespace upos_device_simulation.Models
 {
     public class PinEnteredEventArgs
     {
@@ -13,7 +7,7 @@ namespace upos_device_simulation
         public string ExpirationDate { get; set; }
         public string ServiceCode { get; set; }
         public string PinData { get; set; }
-        public decimal Ammount { get; set; }
+        public decimal Amount { get; set; }
         public string DeviceId { get; set; }
         public bool PaymentStatus { get; set; }
     }

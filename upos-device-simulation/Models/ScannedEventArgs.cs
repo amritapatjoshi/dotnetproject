@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace upos_device_simulation
+namespace upos_device_simulation.Models
 {
     public class ScannedEventArgs : EventArgs
     {

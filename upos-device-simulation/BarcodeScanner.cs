@@ -1,59 +1,58 @@
 ﻿using System;
 using System.Text;
 using Microsoft.PointOfService;
-using Microsoft.PointOfService.DeviceSimulators;
+using upos_device_simulation.Interfaces;
+using upos_device_simulation.Models;
 
 namespace upos_device_simulation
 {
 
-  
-    public sealed class BarcodeScanner
+    public sealed class BarcodeScanner : IBarcodeScanner
     {
+        private ILogger logger;
         private PosExplorer posExplorer;
         private Scanner scanner;
         public  event EventHandler<ScannedEventArgs> Scanned;
-        private static readonly BarcodeScanner barcodeScanner = new BarcodeScanner();
-        ScannerSimulator scannerSimulator=new ScannerSimulator();
-        private  BarcodeScanner()
+         public BarcodeScanner(ILogger logger)
         {
+            this.logger = logger;
             posExplorer = new PosExplorer();
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
         }
-        public static BarcodeScanner Instance
-        {
-            get
-            {
-                return barcodeScanner;
-            }
-        }
+        
         public void Start()
         {
+            logger.Info("Getting Scanner form posExplorer.");
             DeviceInfo device = posExplorer.GetDevices(DeviceType.Scanner)[0];
+            logger.Info("Got Scanner");
             scanner = (Scanner)posExplorer.CreateInstance(device);
             scanner.Open();
             scanner.Claim(1000);
             scanner.DataEvent += new DataEventHandler(scanner_DataEvent);
+            scanner.ErrorEvent += new DeviceErrorEventHandler(scanner_ErrorEvent);
             scanner.DeviceEnabled = true;
             scanner.DataEventEnabled = true;
             scanner.DecodeData = true;
-            
-            
+            logger.Info("Scanner Started");
         }
 
-         void scanner_DataEvent(object sender, DataEventArgs e)
+        private void scanner_ErrorEvent(object sender, DeviceErrorEventArgs e)
         {
-            
+            logger.Error("Error occured while scanning product.",e.ErrorCode);
+        }
+
+        private void scanner_DataEvent(object sender, DataEventArgs e)
+         {
             ASCIIEncoding asciiEncoding = new ASCIIEncoding();
             var scandata = asciiEncoding.GetString(scanner.ScanDataLabel);
-            Console.WriteLine(scandata);
+            logger.Info("Barcode Scanned " +scandata);
             Scanned?.Invoke(null, new ScannedEventArgs { BarcodeId = scandata,DeviceId="1" });
             scanner.DeviceEnabled = true;
             scanner.DataEventEnabled = true;
             scanner.DecodeData = true;
-        }
-
-         void posExplorer_DeviceRemovedEvent(object sender, DeviceChangedEventArgs e)
+         }
+        private void posExplorer_DeviceRemovedEvent(object sender, DeviceChangedEventArgs e)
         {
             if (e.Device.Type == "Scanner")
             {
@@ -61,14 +60,11 @@ namespace upos_device_simulation
                 scanner.DeviceEnabled = false;
                 scanner.Release();
                 scanner.Close();
-                Console.WriteLine("Scanner removed");
+                logger.Info("Scanner removed");
             }
         }
-        public void Scanner_InputDataEvent(string barcode)
-        {
-            scannerSimulator.InputDataEvent(barcode, BarCodeSymbology.Unknown);
-        }
-         void posExplorer_DeviceAddedEvent(object sender, DeviceChangedEventArgs e)
+       
+        private void posExplorer_DeviceAddedEvent(object sender, DeviceChangedEventArgs e)
         {
             if (e.Device.Type == "Scanner")
             {
@@ -79,7 +75,7 @@ namespace upos_device_simulation
                 scanner.DeviceEnabled = true;
                 scanner.DataEventEnabled = true;
                 scanner.DecodeData = true;
-                Console.WriteLine("Scanner Attached");
+                logger.Info("Scanner Attached");
             }
         }
     }

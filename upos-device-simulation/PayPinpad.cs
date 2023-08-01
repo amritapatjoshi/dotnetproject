@@ -1,18 +1,22 @@
 ﻿using Microsoft.PointOfService;
 using System;
 using System.Text;
+using upos_device_simulation.Interfaces;
+using upos_device_simulation.Models;
 
 namespace upos_device_simulation
 {
 
-    public class Paypinpad
+    public class Paypinpad : IPaypinpad
     {
         private readonly PosExplorer posExplorer;
         private PinPad pinpad;
         public event EventHandler<PinEnteredEventArgs> PinEntered;
+        ILogger logger;
         public CardSwipeEventArgs CardSwipeInfo { get; set; }
-        public Paypinpad()
+        public Paypinpad( ILogger logger)
         {
+            this.logger = logger;
             posExplorer = new PosExplorer();
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
@@ -20,8 +24,9 @@ namespace upos_device_simulation
 
         public void Start(CardSwipeEventArgs cardInfo=null)
         {
-            //DeviceInfo device = posExplorer.GetDevice("pinpad", "mypinpad");
+            logger.Info("Getting PinPad Device from posExplorer.");
             DeviceInfo device = posExplorer.GetDevices(DeviceType.PinPad)[0];
+            logger.Info("Got Pinpad Device");
             if (pinpad == null)
             {
                 if (cardInfo!=null)
@@ -40,10 +45,10 @@ namespace upos_device_simulation
                 pinpad.MerchantId = "M1";
                 pinpad.AccountNumber = cardInfo.AccountNumber;
                 PinPadSystem pps = (PinPadSystem)Enum.Parse(typeof(PinPadSystem), PinPadSystem.Dukpt.ToString());
-                int th = int.Parse("1", System.Globalization.CultureInfo.CurrentCulture);
-                pinpad.BeginEftTransaction(pps, th);
+                int transactionHost = int.Parse("1", System.Globalization.CultureInfo.CurrentCulture);
+                pinpad.BeginEftTransaction(pps, transactionHost);
                 enterPin();
-
+                logger.Info("Pinpad Started");
             }
 
         }
@@ -56,19 +61,18 @@ namespace upos_device_simulation
         internal void EndEftTransaction()
         {
             pinpad.EndEftTransaction(EftTransactionCompletion.Normal);
-            //Console.WriteLine("Transaction Ended");
         }
 
         void pinpad_DataEvent(object sender, DataEventArgs e)
         {
             if ((PinEntryStatus)e.Status == PinEntryStatus.Success)
-                DisplayMessage("EncryptedPIN = " + pinpad.EncryptedPin + "\r\nAdditionalSecurityInformation = " + pinpad.AdditionalSecurityInformation);
+                logger.Info("EncryptedPIN = " + pinpad.EncryptedPin + "\r\nAdditionalSecurityInformation = " + pinpad.AdditionalSecurityInformation);
             else if ((PinEntryStatus)e.Status == PinEntryStatus.Cancel)
-                DisplayMessage("Pin entry was cancelled.");
+                logger.Info("Pin entry was cancelled.");
             else if ((PinEntryStatus)e.Status == PinEntryStatus.Timeout)
-                DisplayMessage("A timeout condition occured in the pinpad.");
+                logger.Info("A timeout condition occured in the pinpad.");
             else
-                DisplayMessage("pinpad returned status code: " + e.Status.ToString(System.Globalization.CultureInfo.CurrentCulture));
+                logger.Info("pinpad returned status code: " + e.Status.ToString(System.Globalization.CultureInfo.CurrentCulture));
 
             postData(pinpad.EncryptedPin,pinpad.AccountNumber,pinpad.Amount,"1",e.Status ==1 ?true:false);
 
@@ -80,7 +84,7 @@ namespace upos_device_simulation
             { 
                 PinData = pinpaddata,
                 AccountNumber=accountNumber,
-                Ammount=ammount,
+                Amount=ammount,
                 DeviceId=deviceId,
                 PaymentStatus=paymentstatus ,
                 Name=CardSwipeInfo.Name,
@@ -88,9 +92,9 @@ namespace upos_device_simulation
                 ServiceCode=CardSwipeInfo.ServiceCode
 
             });
-            Console.WriteLine(pinpaddata);
-           
-            Console.WriteLine("Pinpad Transaction Ended");
+            logger.Info("User enter Pin: "+pinpaddata);
+
+            logger.Info("Pinpad Transaction Ended.");
 
             pinpad.DeviceEnabled = false;
             pinpad.DataEventEnabled = false;
@@ -101,24 +105,22 @@ namespace upos_device_simulation
         void pinpad_ErrorEvent(object sender, DeviceErrorEventArgs e)
         {
             if (e.ErrorCode == ErrorCode.Extended || e.ErrorCodeExtended == PinPad.ExtendedErrorBadKey)
-            {
-                DisplayMessage("An encryption key is corrupted or missing.");
-            }
+            
+                logger.Error("An encryption key is corrupted or missing.");
+            
+            else
+                logger.Error("Error while reading user entered pin.", e.ErrorCode);
+        
         }
 
-        protected void DisplayMessage(string message)
-        {
-            Console.WriteLine(message);
-        }
         void posExplorer_DeviceRemovedEvent(object sender, DeviceChangedEventArgs e)
         {
             if (e.Device.Type == "pinpad")
             {
-
                 pinpad.DeviceEnabled = false;
                 pinpad.Release();
                 pinpad.Close();
-                Console.WriteLine("Pinpad removed");
+                logger.Info("Pinpad removed.");
             }
         }
 
@@ -130,7 +132,7 @@ namespace upos_device_simulation
                 pinpad.Open();
                 pinpad.Claim(1000);
                 pinpad.DeviceEnabled = true;
-                Console.WriteLine("Pinpad Attached");
+                logger.Info("Pinpad Attached.");
             }
         }
 
