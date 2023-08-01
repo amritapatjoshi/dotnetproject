@@ -1,13 +1,13 @@
 # upos-device-simulation
 
-#Introduction
+# Introduction
 This contains the code implementing .net Pos  based UPOS standard to communicate with hardware peripherals and simulate hardware devices as well and communicate data received from hardware devices to UI.
  
-#Getting Started
+# Getting Started
 
-##Directions to run locally
+## Directions to run locally
 
-These are some notes which will helped me get up and running locally:
+These are some notes which will helped running locally:
 1. Install Visual Studio 2022 using below url. For running this application .net framework 4.8 is required
    https://visualstudio.microsoft.com/vs/whatsnew/
 2. Install Point of Service using Below Url. Include Sdk while installing Point of service
