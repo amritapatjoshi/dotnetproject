@@ -1,5 +1,8 @@
 ﻿using Microsoft.PointOfService;
 using Serilog;
+using Serilog.Sinks.Graylog;
+using System;
+using System.Configuration;
 
 namespace upos_device_simulation.Helpers
 {
@@ -11,24 +14,23 @@ namespace upos_device_simulation.Helpers
         public Logger()
         {
             new FileHelper().CreateLogFile(logFileName);
+            CreateLogger();
         }
        
-        public  void CreateLogger()
+        private  void CreateLogger()
         {
-           
-            log= new LoggerConfiguration()
+
+            log = new LoggerConfiguration()
                     .WriteTo.Console()
                     .WriteTo.File(logFileName)
-                    //.WriteTo.Graylog(
-                    //    new GraylogSinkOptions
-                    //    {
-                    //        HostnameOrAddress = ConfigurationManager.AppSettings["loggerHostanme"], 
-                    //        Port = Convert.ToInt32(ConfigurationManager.AppSettings["loggerPort"])
-                    //     }
-                    //  )
+                    .WriteTo.Graylog(
+                        new GraylogSinkOptions
+                        {
+                            HostnameOrAddress = ConfigurationManager.AppSettings["loggerHostanme"],
+                            Port = Convert.ToInt32(ConfigurationManager.AppSettings["loggerPort"])
+                        }
+                      )
                     .CreateLogger();
-            
-
         }
         public  void Info(string message)
         {

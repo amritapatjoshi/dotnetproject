@@ -9,7 +9,7 @@ namespace upos_device_simulation.Interfaces
 {
     public interface ILogger
     {
-        void CreateLogger();
+       // void CreateLogger();
         void Info(string message);
         void Error(string message, ErrorCode errorCode);
         void Error(string message);

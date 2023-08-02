@@ -3,7 +3,7 @@ using System.Threading;
 using Microsoft.PointOfService;
 using upos_device_simulation.Interfaces;
 
-namespace upos_device_simulation
+namespace upos_device_simulation.Services
 {
 
     public class ReceiptPrinter: IReceiptPrinter

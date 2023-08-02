@@ -31,7 +31,7 @@ namespace UposDeviceSimulationConsole
         }
         public void Execute()
         {
-            logger.CreateLogger();
+           
             logger.Info("upos Service started.");
             string url = ConfigurationManager.AppSettings["SignalrUrl"];
             using (WebApp.Start<SignalRStartup>(url))
@@ -47,8 +47,9 @@ namespace UposDeviceSimulationConsole
             if (data == "scan")
             {
                 logger.Info("Starting scanner simmulator");
-                barcodeScanner.Start();
                 barcodeScanner.Scanned += BarcodeScanner_Scanned;
+                barcodeScanner.Start();
+               
             }
             else if (data == "print")
             {
@@ -59,14 +60,16 @@ namespace UposDeviceSimulationConsole
             else if (data == "pinpad")
             {
                 logger.Info("Starting Pinpad simmulator");
-                paypinpad.Start();
                 paypinpad.PinEntered += PayPinpad_PinEntered;
+                paypinpad.Start();
+                
             }
             else if (data == "msr")
             {
                 logger.Info("Starting MSR simmulator");
-                paymsr.Start();
                 paymsr.CardSwiped += PayMsr_CardSwiped;
+                paymsr.Start();
+                
             }
             else
             {

@@ -3,7 +3,7 @@ using System;
 using upos_device_simulation.Interfaces;
 using upos_device_simulation.Models;
 
-namespace upos_device_simulation
+namespace upos_device_simulation.Services
 {
     public class PayMSR: IPayMSR
     {

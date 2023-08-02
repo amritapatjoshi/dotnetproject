@@ -4,7 +4,7 @@ using System.Text;
 using upos_device_simulation.Interfaces;
 using upos_device_simulation.Models;
 
-namespace upos_device_simulation
+namespace upos_device_simulation.Services
 {
 
     public class Paypinpad : IPaypinpad
@@ -43,7 +43,8 @@ namespace upos_device_simulation
                 pinpad.Amount = decimal.Parse("220", System.Globalization.CultureInfo.CurrentCulture);
                 pinpad.TerminalId = "T1";
                 pinpad.MerchantId = "M1";
-                pinpad.AccountNumber = cardInfo.AccountNumber;
+                if(cardInfo!=null)
+                    pinpad.AccountNumber = cardInfo.AccountNumber;
                 PinPadSystem pps = (PinPadSystem)Enum.Parse(typeof(PinPadSystem), PinPadSystem.Dukpt.ToString());
                 int transactionHost = int.Parse("1", System.Globalization.CultureInfo.CurrentCulture);
                 pinpad.BeginEftTransaction(pps, transactionHost);

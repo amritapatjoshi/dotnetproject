@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using upos_device_simulation;
+using upos_device_simulation.Services;
 using upos_device_simulation.Helpers;
 using upos_device_simulation.Interfaces;
 
