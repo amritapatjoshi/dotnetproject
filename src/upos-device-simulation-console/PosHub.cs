@@ -9,15 +9,15 @@ namespace UposDeviceSimulationConsole
     public class PosHub : Hub
     {
         ILogger logger;
-        Executor executor;
+        PosExecutor executor;
         IReceiptPrinter receiptPrinter;
         public PosHub ()
         {
             this.logger = (ILogger)Startup._serviceProvider.GetService(typeof(ILogger));
-            this.executor = (Executor)Startup._serviceProvider.GetService(typeof(Executor));
+            this.executor = (PosExecutor)Startup._serviceProvider.GetService(typeof(PosExecutor));
             this.receiptPrinter = (IReceiptPrinter)Startup._serviceProvider.GetService(typeof(IReceiptPrinter)); 
         }
-       public PosHub(Executor executor, ILogger logger,IReceiptPrinter receiptPrinter )
+       public PosHub(PosExecutor executor, ILogger logger,IReceiptPrinter receiptPrinter )
         {
             this.logger = logger;
             this.executor = executor;

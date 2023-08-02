@@ -18,7 +18,7 @@ namespace UposDeviceSimulationConsole
             services.AddTransient<IPaypinpad, Paypinpad>();
             services.AddTransient<IReceiptPrinter, ReceiptPrinter>();
             services.AddSingleton<PosHub, PosHub>();
-            services.AddSingleton<Executor, Executor>();
+            services.AddSingleton<PosExecutor, PosExecutor>();
             _serviceProvider = services.BuildServiceProvider();
         }
     }

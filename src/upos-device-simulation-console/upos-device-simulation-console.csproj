@@ -227,7 +227,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Executor.cs" />
+    <Compile Include="PosExecutor.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="PosHub.cs" />
     <Compile Include="Program.cs" />

@@ -9,7 +9,7 @@ using upos_device_simulation.Interfaces;
 
 namespace UposDeviceSimulationConsole
 {
-    public class Executor
+    public class PosExecutor
     {
         ILogger logger;
         static IHubContext context = GlobalHost.ConnectionManager.GetHubContext<PosHub>();
@@ -17,29 +17,35 @@ namespace UposDeviceSimulationConsole
         public static string defaultSimulatorType = "scan";
         IBarcodeScanner barcodeScanner;
         IReceiptPrinter receiptPrinter;
-        IPayMSR paymsr;
+        IPayMSR payMSR;
         IPaypinpad paypinpad;
        
-        public Executor(ILogger logger, IBarcodeScanner barcodeScanner, IPaypinpad paypinpad, IPayMSR payMSR, IReceiptPrinter receiptPrinter)
+        public PosExecutor(ILogger logger, IBarcodeScanner barcodeScanner, IPaypinpad paypinpad, IPayMSR payMSR, IReceiptPrinter receiptPrinter)
         {
             this.logger = logger;   
             this.barcodeScanner=barcodeScanner;
             this.paypinpad=paypinpad;
-            this.paymsr = payMSR;
+            this.payMSR = payMSR;
             this.receiptPrinter=receiptPrinter;
-                                        
         }
         public void Execute()
         {
-           
-            logger.Info("upos Service started.");
-            string url = ConfigurationManager.AppSettings["SignalrUrl"];
-            using (WebApp.Start<SignalRStartup>(url))
+            try
             {
-                logger.Info("The Server URL is: " + url);
-                InvokeSimulator(defaultSimulatorType);
-                Console.ReadLine();
+                logger.Info("upos Service started.");
+                string url = ConfigurationManager.AppSettings["SignalrUrl"];
+                using (WebApp.Start<SignalRStartup>(url))
+                {
+                    logger.Info("The Server URL is: " + url);
+                    InvokeSimulator(defaultSimulatorType);
+                    Console.ReadLine();
+                }
             }
+            catch (Exception ex)
+            {
+                logger.Error("Exception occured in PosExecutor" + ex.Message + ex.StackTrace);
+            }
+           
         }
         public void InvokeSimulator(object obj)
         {
@@ -67,8 +73,8 @@ namespace UposDeviceSimulationConsole
             else if (data == "msr")
             {
                 logger.Info("Starting MSR simmulator");
-                paymsr.CardSwiped += PayMsr_CardSwiped;
-                paymsr.Start();
+                payMSR.CardSwiped += PayMsr_CardSwiped;
+                payMSR.Start();
                 
             }
             else
@@ -78,25 +84,46 @@ namespace UposDeviceSimulationConsole
         }
         private  void PayMsr_CardSwiped(object sender, CardSwipeEventArgs e)
         {
-            logger.Info("Card Swiped and read user card Details ");
-            logger.Info("starting Pinpad simmulator");
-            
-            paypinpad.Start(e);
-            paypinpad.PinEntered += PayPinpad_PinEntered;
+            try
+            {
+                logger.Info("Card Swiped and read user card Details ");
+                logger.Info("starting Pinpad simmulator");
+                paypinpad.PinEntered += PayPinpad_PinEntered;
+                paypinpad.Start(e);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Exception occured in PayMsr_CardSwiped." + ex.Message + ex.StackTrace);
+            }
+           
         }
 
         private async  void BarcodeScanner_Scanned(object sender, ScannedEventArgs e)
         {
-            logger.Info("Barcode  : " + e.BarcodeId + " scanned and sending to UI");
-            await context.Clients.All.sendScannedData(e.BarcodeId, e.DeviceId);
-            logger.Info("Barcode send to UI");
+            try 
+            { 
+                logger.Info("Barcode  : " + e.BarcodeId + " scanned and sending to UI");
+                await context.Clients.All.sendScannedData(e.BarcodeId, e.DeviceId);
+                logger.Info("Barcode send to UI");
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Exception occured in BarcodeScanner_Scanned." + ex.Message + ex.StackTrace);
+            }
         }
 
         private async  void PayPinpad_PinEntered(object sender, PinEnteredEventArgs e)
         {
-            logger.Info("Pin Enterd by " + e.Name + " and sending Payment details to UI");
-            await context.Clients.All.paymentComplete(e);
-            logger.Info("Payment details send to UI");
+            try
+            { 
+                logger.Info("Pin Enterd by " + e.Name + " and sending Payment details to UI");
+                await context.Clients.All.paymentComplete(e);
+                logger.Info("Payment details send to UI");
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Exception occured in PayPinpad_PinEntered." + ex.Message + ex.StackTrace);
+            }
 
         }
     }
