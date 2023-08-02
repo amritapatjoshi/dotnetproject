@@ -46,7 +46,7 @@ namespace upos_device_simulation.Services
         {
             try
             {
-                string cpuInfo = String.Empty;
+                string cpuInfo = string.Empty;
                 ManagementClass mc = new ManagementClass("Win32_Processor");
                 ManagementObjectCollection moc = mc.GetInstances();
 
