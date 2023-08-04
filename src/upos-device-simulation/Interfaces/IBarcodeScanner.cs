@@ -7,6 +7,7 @@ namespace upos_device_simulation.Interfaces
     {
         event EventHandler<ScannedEventArgs> Scanned;
         void Start();
+        string CheckDeviceHealth();
 
     }
 }

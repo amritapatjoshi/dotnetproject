@@ -30,7 +30,19 @@ namespace upos_device_simulation.Services
             Print((string)printData);
             logger.Info("Printer started");
         }
+        public string CheckDeviceHealth()
+        {
+            try
+            {
+                string res = printer.CheckHealth(HealthCheckLevel.Internal);
+                return "CheckHealth(Internal) returned: " + res;
 
+            }
+            catch (Exception ex)
+            {
+                return logger.GetPosException(ex);
+            }
+        }
         private void printer_ErrorEvent(object sender, DeviceErrorEventArgs e)
         {
             if (e.ErrorCode == ErrorCode.Extended || e.ErrorCodeExtended == PosPrinter.ExtendedErrorCoverOpen)

@@ -43,7 +43,7 @@ namespace UposDeviceSimulationConsole
             }
             catch (Exception ex)
             {
-                logger.Error("Exception occured in PosExecutor" + ex.Message + ex.StackTrace);
+                logger.Error("Exception occured in PosExecutor" + ex.Message );
             }
            
         }
@@ -55,7 +55,7 @@ namespace UposDeviceSimulationConsole
                 logger.Info("Starting scanner simmulator");
                 barcodeScanner.Scanned += BarcodeScanner_Scanned;
                 barcodeScanner.Start();
-               
+               barcodeScanner.CheckDeviceHealth();
             }
             else if (data == "print")
             {

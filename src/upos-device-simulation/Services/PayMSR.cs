@@ -37,9 +37,23 @@ namespace upos_device_simulation.Services
                 msr.DecodeData = true;
                 msr.ParseDecodeData = true;
                 logger.Info("MSR Started.");
+                logger.Info(CheckDeviceHealth());
             }
         }
        
+        public string CheckDeviceHealth()
+        {
+            try
+            {
+               string res =msr.CheckHealth(HealthCheckLevel.Internal);
+               return "CheckHealth(Internal) returned: " + res ;
+                
+            }
+            catch (Exception ex)
+            {
+                return logger.GetPosException(ex);
+            }
+        }
         private void msr_DataEvent(object sender, DataEventArgs e)
         {
 

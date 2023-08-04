@@ -76,5 +76,33 @@ namespace upos_device_simulation.Helpers
 
         }
 
+        public string GetPosException(Exception e)
+        {
+            string error;
+            Exception inner = e.InnerException;
+            if (inner != null)
+            {
+                GetPosException(inner);
+            }
+
+            if (e is PosControlException)
+            {
+                PosControlException pe = (PosControlException)e;
+
+                error =
+                    "POSControlException ErrorCode(" +
+                    pe.ErrorCode.ToString() +
+                    ") ExtendedErrorCode(" +
+                    pe.ErrorCodeExtended.ToString(System.Globalization.CultureInfo.CurrentCulture) +
+                    ") occurred: " +
+                    pe.Message;
+            }
+            else
+            {
+                error = e.ToString();
+            }
+            return error;
+        }
+
     }
 }

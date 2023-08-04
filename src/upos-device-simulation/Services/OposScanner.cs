@@ -9,15 +9,17 @@ using OposScanner_CCO;
 namespace upos_device_simulation.Services
 {
 
-    public sealed class BarcodeScanner : IBarcodeScanner
+    public sealed class OposScanner : IBarcodeScanner
     {
         private ILogger logger;
         private PosExplorer posExplorer;
-        private Scanner scanner;
+        private OPOSScanner scanner;
         public event EventHandler<ScannedEventArgs> Scanned;
-        public BarcodeScanner(ILogger logger)
+        string deviceName = "RS232_SCANNER_ANY";
+        public OposScanner(ILogger logger, OPOSScanner scanner)
         {
             this.logger = logger;
+            this.scanner = scanner;
             posExplorer = new PosExplorer();
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
@@ -26,28 +28,28 @@ namespace upos_device_simulation.Services
         public void Start()
         {
             logger.Info("Getting Scanner form posExplorer.");
-            DeviceInfo device = posExplorer.GetDevices(DeviceType.Scanner)[0];
+            //var devices = posExplorer.GetDevices(DeviceType.Scanner)[4];
             logger.Info("Got Scanner");
-            scanner = (Scanner)posExplorer.CreateInstance(device);
-            scanner.Open();
-            scanner.Claim(1000);
-            scanner.DataEvent += new DataEventHandler(scanner_DataEvent);
-            scanner.ErrorEvent += new DeviceErrorEventHandler(scanner_ErrorEvent);
+            //scanner = new OPOSScannerClass();
+            scanner.Open(deviceName);
+            scanner.ClaimDevice(1000);
+            scanner.DataEvent += scanner_DataEvent;
+            scanner.ErrorEvent += scanner_ErrorEvent;
             scanner.DeviceEnabled = true;
             scanner.DataEventEnabled = true;
             scanner.DecodeData = true;
             logger.Info("Scanner Started");
         }
 
-        private void scanner_ErrorEvent(object sender, DeviceErrorEventArgs e)
+        private void scanner_ErrorEvent(int ResultCode, int ResultCodeExtended, int ErrorLocus, ref int pErrorResponse)//(object sender, DeviceErrorEventArgs e)
         {
-            logger.Error("Error occured while scanning product.", e.ErrorCode);
+            logger.Error("Error occured while scanning product." + ResultCode);
         }
         public string CheckDeviceHealth()
         {
             try
             {
-                string res = scanner.CheckHealth(HealthCheckLevel.Interactive);
+                string res = scanner.CheckHealthText;
                 return "CheckHealth(Internal) returned: " + res;
 
             }
@@ -67,7 +69,7 @@ namespace upos_device_simulation.Services
                 foreach (ManagementObject mo in moc)
                 {
                     if (cpuInfo == String.Empty)
-                    {   
+                    {
                         cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
                     }
                 }
@@ -75,16 +77,15 @@ namespace upos_device_simulation.Services
             }
             catch (Exception ex)
             {
-                logger.Error("Error occured while getting Device ID."+ex.Message+ex.StackTrace);
+                logger.Error("Error occured while getting Device ID." + ex.Message + ex.StackTrace);
                 return "1";
             }
         }
-        private void scanner_DataEvent(object sender, DataEventArgs e)
+        private void scanner_DataEvent(int value)//(object sender, DataEventArgs e)
         {
             logger.Info(CheckDeviceHealth());
             string deviceId = GetDeviceId();
-            ASCIIEncoding asciiEncoding = new ASCIIEncoding();
-            var scandata = asciiEncoding.GetString(scanner.ScanDataLabel);
+            var scandata = scanner.ScanDataLabel;
             logger.Info("Barcode Scanned " + scandata);
             Scanned?.Invoke(null, new ScannedEventArgs { BarcodeId = scandata, DeviceId = deviceId });
             scanner.DeviceEnabled = true;
@@ -97,20 +98,22 @@ namespace upos_device_simulation.Services
             {
                 scanner.DataEventEnabled = false;
                 scanner.DeviceEnabled = false;
-                scanner.Release();
+                scanner.ReleaseDevice();
                 scanner.Close();
                 logger.Info("Scanner removed");
             }
         }
-        
+
         private void posExplorer_DeviceAddedEvent(object sender, DeviceChangedEventArgs e)
         {
             if (e.Device.Type == "Scanner")
             {
-                scanner = (Scanner)posExplorer.CreateInstance(e.Device);
-                scanner.Open();
-                scanner.Claim(1000);
-                scanner.DataEvent += new DataEventHandler(scanner_DataEvent);
+                scanner = new OPOSScannerClass();
+
+                string profileName = "RS232_SCANNER_ANY";
+                scanner.Open(profileName);
+                scanner.ClaimDevice(1000);
+                scanner.DataEvent += scanner_DataEvent;
                 scanner.DeviceEnabled = true;
                 scanner.DataEventEnabled = true;
                 scanner.DecodeData = true;

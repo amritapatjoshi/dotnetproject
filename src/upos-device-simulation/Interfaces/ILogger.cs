@@ -15,5 +15,6 @@ namespace upos_device_simulation.Interfaces
         void Error(string message);
         void Debug(string message);
         void Verbose(string message);
+        string GetPosException(Exception ex);
     }
 }

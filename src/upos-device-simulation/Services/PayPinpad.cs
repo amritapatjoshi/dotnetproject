@@ -53,7 +53,19 @@ namespace upos_device_simulation.Services
             }
 
         }
+        public string CheckDeviceHealth()
+        {
+            try
+            {
+                string res = pinpad.CheckHealth(HealthCheckLevel.Internal);
+                return "CheckHealth(Internal) returned: " + res;
 
+            }
+            catch (Exception ex)
+            {
+                return logger.GetPosException(ex);
+            }
+        }
         internal void enterPin()
         {
             pinpad.EnablePinEntry();
