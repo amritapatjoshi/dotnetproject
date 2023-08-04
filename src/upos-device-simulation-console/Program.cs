@@ -11,7 +11,7 @@ namespace UposDeviceSimulationConsole
            .ConfigureServices(ConfigureServices)
            .Build()
            .Services
-           .GetService<Executor>()
+           .GetService<PosExecutor>()
            .Execute();
         }
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)

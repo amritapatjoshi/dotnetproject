@@ -7,5 +7,6 @@ namespace upos_device_simulation.Interfaces
     {
         event EventHandler<PinEnteredEventArgs> PinEntered;
         void Start(CardSwipeEventArgs cardInfo = null);
+        string CheckDeviceHealth();
     }
 }

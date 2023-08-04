@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using upos_device_simulation;
+using upos_device_simulation.Services;
 using upos_device_simulation.Helpers;
 using upos_device_simulation.Interfaces;
+using OposScanner_CCO;
 
 namespace UposDeviceSimulationConsole
 {
@@ -17,8 +18,9 @@ namespace UposDeviceSimulationConsole
             services.AddTransient<IPayMSR, PayMSR>();
             services.AddTransient<IPaypinpad, Paypinpad>();
             services.AddTransient<IReceiptPrinter, ReceiptPrinter>();
+            services.AddTransient<OPOSScanner, OPOSScannerClass>();
             services.AddSingleton<PosHub, PosHub>();
-            services.AddSingleton<Executor, Executor>();
+            services.AddSingleton<PosExecutor, PosExecutor>();
             _serviceProvider = services.BuildServiceProvider();
         }
     }

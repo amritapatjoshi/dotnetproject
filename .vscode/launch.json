@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+         {
+             "name": ".NET Launch (console)",
+             "type":"clr",
+             "request": "launch",
+             //"preLaunchTask": "build",
+             "program": "${workspaceFolder}/src/upos-device-simulation-console/bin/Debug/upos-device-simulation-console.exe",
+             "args":[],
+             "cwd": "${workspaceFolder}",
+             "console": "internalConsole",
+             "stopAtEntry": false,
+             "internalConsoleOptions": "openOnSessionStart"
+         },
+         {
+             "name": ".NET Attach",
+             "type": "clr",
+             "request": "attach",
+             "processId": "${command:pickProcess}"
+         }
+     ]
+ }
