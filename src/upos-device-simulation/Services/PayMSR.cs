@@ -12,10 +12,10 @@ namespace upos_device_simulation.Services
         private Msr msr;
         public event EventHandler<CardSwipeEventArgs> CardSwiped;
         ILogger logger;
-        public PayMSR( ILogger logger)
+        public PayMSR( ILogger logger,PosExplorer explorer)
         {
             this.logger = logger;
-            posExplorer = new PosExplorer();
+            posExplorer = explorer;
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
         }

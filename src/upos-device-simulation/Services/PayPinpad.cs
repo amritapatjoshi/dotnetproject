@@ -14,10 +14,10 @@ namespace upos_device_simulation.Services
         public event EventHandler<PinEnteredEventArgs> PinEntered;
         ILogger logger;
         public CardSwipeEventArgs CardSwipeInfo { get; set; }
-        public Paypinpad( ILogger logger)
+        public Paypinpad( ILogger logger, PosExplorer explorer)
         {
             this.logger = logger;
-            posExplorer = new PosExplorer();
+            posExplorer = explorer;
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
         }

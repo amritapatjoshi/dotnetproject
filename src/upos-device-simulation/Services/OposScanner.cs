@@ -16,11 +16,11 @@ namespace upos_device_simulation.Services
         private OPOSScanner scanner;
         public event EventHandler<ScannedEventArgs> Scanned;
         string deviceName = "RS232_SCANNER_ANY";
-        public OposScanner(ILogger logger, OPOSScanner scanner)
+        public OposScanner(ILogger logger, OPOSScanner scanner, PosExplorer explorer)
         {
             this.logger = logger;
             this.scanner = scanner;
-            posExplorer = new PosExplorer();
+            posExplorer = explorer;
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
         }

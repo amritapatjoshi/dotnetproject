@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IFileHelper.cs" />
     <Compile Include="Services\BarcodeScanner.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Models\CardInfo.cs" />

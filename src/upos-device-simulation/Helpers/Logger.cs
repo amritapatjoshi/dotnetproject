@@ -3,6 +3,8 @@ using Serilog;
 using Serilog.Sinks.Graylog;
 using System;
 using System.Configuration;
+using upos_device_simulation.Interfaces;
+using ILogger = Serilog.ILogger;
 
 namespace upos_device_simulation.Helpers
 {
@@ -10,26 +12,26 @@ namespace upos_device_simulation.Helpers
     {
         private static ILogger log;
         private static string logFileName="log.txt";
+        readonly LoggerConfiguration _loggerConfiguration;
+        readonly GraylogSinkOptions _graylogSinkOptions;
 
-        public Logger()
+
+        public Logger(LoggerConfiguration loggerConfiguration,IFileHelper fileHelper, GraylogSinkOptions graylogSinkOptions)
         {
-            new FileHelper().CreateLogFile(logFileName);
+            _loggerConfiguration = loggerConfiguration;
+            _graylogSinkOptions = graylogSinkOptions;
+            fileHelper.CreateLogFile(logFileName);
             CreateLogger();
         }
        
         private  void CreateLogger()
         {
-
-            log = new LoggerConfiguration()
+            _graylogSinkOptions.HostnameOrAddress = ConfigurationManager.AppSettings["loggerHostanme"];
+            _graylogSinkOptions.Port = Convert.ToInt32(ConfigurationManager.AppSettings["loggerPort"]);
+            log = _loggerConfiguration
                     .WriteTo.Console()
                     .WriteTo.File(logFileName)
-                    .WriteTo.Graylog(
-                        new GraylogSinkOptions
-                        {
-                            HostnameOrAddress = ConfigurationManager.AppSettings["loggerHostanme"],
-                            Port = Convert.ToInt32(ConfigurationManager.AppSettings["loggerPort"])
-                        }
-                      )
+                    .WriteTo.Graylog(_graylogSinkOptions)
                     .CreateLogger();
         }
         public  void Info(string message)

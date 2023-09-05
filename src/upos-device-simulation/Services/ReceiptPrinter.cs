@@ -11,10 +11,10 @@ namespace upos_device_simulation.Services
         private ILogger logger;
         private PosExplorer posExplorer;
         private PosPrinter printer;
-        public ReceiptPrinter(ILogger logger)
+        public ReceiptPrinter(ILogger logger, PosExplorer explorer)
         {
             this.logger = logger;
-            posExplorer = new PosExplorer();
+            posExplorer = explorer;
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
         }

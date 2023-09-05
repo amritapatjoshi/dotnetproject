@@ -15,10 +15,10 @@ namespace upos_device_simulation.Services
         private PosExplorer posExplorer;
         private Scanner scanner;
         public event EventHandler<ScannedEventArgs> Scanned;
-        public BarcodeScanner(ILogger logger)
+        public BarcodeScanner(ILogger logger, PosExplorer explorer)
         {
             this.logger = logger;
-            posExplorer = new PosExplorer();
+            posExplorer = explorer;
             posExplorer.DeviceAddedEvent += new DeviceChangedEventHandler(posExplorer_DeviceAddedEvent);
             posExplorer.DeviceRemovedEvent += new DeviceChangedEventHandler(posExplorer_DeviceRemovedEvent);
         }
