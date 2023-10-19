@@ -16,18 +16,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # - name: Set up .NET
-    #   uses: actions/setup-dotnet@v2
-    #   with:
-    #     dotnet-version: 3.1.x
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 4.8.x
 
-    # - name: Show .NET version
-    #   run: dotnet --version
-
-    - name: Set up .NET Framework
-      run: |
-        choco install dotnet-3.1-sdk -y
-        dotnet --version
+    - name: Show .NET version
+      run: dotnet --version
 
     - name: Restore dependencies
       run: dotnet restore
