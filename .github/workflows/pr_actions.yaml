@@ -21,6 +21,11 @@ jobs:
         ./gitleaks-linux-amd64 -o gitleaks-report.json
       continue-on-error: true
 
+    - name: Install .NET Framework
+      run: |
+        choco install dotnet4.8 -y
+      continue-on-error: true
+
     - name: Set up .NET Framework
       uses: actions/setup-dotnet@v2
       with:
