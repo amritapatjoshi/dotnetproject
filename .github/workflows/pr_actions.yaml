@@ -26,6 +26,9 @@ jobs:
       with:
         dotnet-version: 4.8.1  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
       # continue-on-error: true
+
+    - name: Restore .NET Core Dependencies
+      run: dotnet restore
       
     - name: Restore dependencies
       run: nuget restore upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
