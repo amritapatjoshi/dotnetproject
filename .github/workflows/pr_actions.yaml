@@ -21,10 +21,10 @@ jobs:
         ./gitleaks-linux-amd64 -o gitleaks-report.json
       continue-on-error: true
       
-    - name: Install .NET Framework 4.8
-      run: |
-          choco install dotnet-48 -y
-          # Or you can use another method to install .NET Framework 4.8 on Windows
+    # - name: Install .NET Framework 4.8
+    #   run: |
+    #       choco install dotnet-48 -y
+    #       # Or you can use another method to install .NET Framework 4.8 on Windows
           
     - name: Check .NET Framework version
       run: |
