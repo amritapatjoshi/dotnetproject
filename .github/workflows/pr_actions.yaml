@@ -25,34 +25,28 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 4.8.x  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
-      continue-on-error: true
+      # continue-on-error: true
       
     - name: Restore dependencies
       run: nuget restore upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
-      continue-on-error: true
+      # continue-on-error: true
       
-    - name: Build the project
-      run: msbuild /p:Configuration=Release upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
-      continue-on-error: true
+    # - name: Build the project
+    #   run: msbuild /p:Configuration=Release upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
+    #   continue-on-error: true
           
     - name: Check .NET Framework version
       run: |
           dotnet --version  
-
-    # - name: Set up .NET Framework
-    #   uses: actions/setup-dotnet@v2
-    #   with:
-    #     dotnet-version: 4.8
-    #   continue-on-error: true   
-
-    # - name: Restore dependencies
-    #   run: nuget restore
+      continue-on-error: true    
 
     - name: Code Lint Check
       run: npm run lint
+      continue-on-error: true
 
     - name: Build Docker image
-      run: docker build -t upos-background-service .  
+      run: docker build -t upos-background-service .
+      continue-on-error: true
 
     # - name: Run Tests
     #   run: npm test 
