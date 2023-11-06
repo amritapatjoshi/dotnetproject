@@ -22,9 +22,9 @@ jobs:
       continue-on-error: true
 
     - name: Set up .NET Framework
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 4.8.x  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
+        dotnet-version: 4.8.1  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
       # continue-on-error: true
       
     - name: Restore dependencies
