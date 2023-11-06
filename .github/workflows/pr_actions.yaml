@@ -23,7 +23,7 @@ jobs:
 
     - name: Install .NET Framework
       run: |
-        choco install dotnet4.8 -y
+        choco install dotnetfx -y
       continue-on-error: true
 
     - name: Set up .NET Framework
