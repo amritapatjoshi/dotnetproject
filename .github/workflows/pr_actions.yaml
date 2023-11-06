@@ -20,34 +20,49 @@ jobs:
         chmod +x gitleaks-linux-amd64
         ./gitleaks-linux-amd64 -o gitleaks-report.json
       continue-on-error: true
+
+    - name: Set up .NET Framework
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 4.8.x  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
+      continue-on-error: true
       
-    - name: Install .NET Framework 4.8
+    - name: Restore dependencies
+      run: nuget restore upos-devicesolution.sln  # Replace 'YourSolution.sln' with the actual solution file name
+      continue-on-error: true
+      
+    - name: Build the project
+      run: msbuild /p:Configuration=Release upos-devicesolution.sln  # Replace 'YourSolution.sln' with the actual solution file name
+      continue-on-error: true
+      
+      
+    # - name: Install .NET Framework 4.8
+    # #   run: |
+    # #       choco install dotnet-48 -y
+    # #       # Or you can use another method to install .NET Framework 4.8 on Windows
     #   run: |
-    #       choco install dotnet-48 -y
-    #       # Or you can use another method to install .NET Framework 4.8 on Windows
-      run: |
-          $url = "https://download.microsoft.com/download/2/4/9/2493E2E3-FD0B-4ECA-9F8F-CEC806A446A4/NDP48-KB4486129-x86-x64-AllOS-ENU.exe"
-          $outputFile = "$env:TEMP\dotnet-framework-installer.exe"
+    #       $url = "https://download.microsoft.com/download/2/4/9/2493E2E3-FD0B-4ECA-9F8F-CEC806A446A4/NDP48-KB4486129-x86-x64-AllOS-ENU.exe"
+    #       $outputFile = "$env:TEMP\dotnet-framework-installer.exe"
           
-          Invoke-WebRequest -Uri $url -OutFile $outputFile
-          Start-Process -Wait -FilePath $outputFile -ArgumentList '/q /norestart'
-          Remove-Item -Path $outputFile
+    #       Invoke-WebRequest -Uri $url -OutFile $outputFile
+    #       Start-Process -Wait -FilePath $outputFile -ArgumentList '/q /norestart'
+    #       Remove-Item -Path $outputFile
           
-          # Check .NET Framework version after installation
-          dotnet --version
+    #       # Check .NET Framework version after installation
+    #       dotnet --version
           
     - name: Check .NET Framework version
       run: |
           dotnet --version  
 
-    - name: Set up .NET Framework
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 4.8
-      continue-on-error: true   
+    # - name: Set up .NET Framework
+    #   uses: actions/setup-dotnet@v2
+    #   with:
+    #     dotnet-version: 4.8
+    #   continue-on-error: true   
 
-    - name: Restore dependencies
-      run: nuget restore
+    # - name: Restore dependencies
+    #   run: nuget restore
 
     - name: Code Lint Check
       run: npm run lint
