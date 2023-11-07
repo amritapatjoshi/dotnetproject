@@ -57,6 +57,14 @@ jobs:
     - name: Code Lint Check
       run: npm run lint
       continue-on-error: true
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+      # with:
+      #   msbuild-version: 16.0
+        
+    - name: Build Project
+      run: msbuild /p:Configuration=Release upos-device-simulation.sln  
 
     # - name: SonarQube Scan
     #   run: |
