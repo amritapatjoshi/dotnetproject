@@ -27,65 +27,28 @@ jobs:
 
     - name: Set up .NET Framework
       uses: actions/setup-dotnet@v2
-      # with:
-        # dotnet-version: 4.8  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
-      # continue-on-error: true
 
     - name: Check .NET Framework version
-      run: |
-          dotnet --version  
+      run: dotnet --version  
       continue-on-error: true      
-
-    # - name: Setup .NET Core SDK
-    #   uses: actions/setup-dotnet@v1
-    #   with:
-    #     dotnet-version: 3.1.401
-
-
-    # - name: Restore .NET Core Dependencies
-    #   run: dotnet restore
       
     - name: Restore dependencies
-      run: nuget restore upos-device-simulation.sln  # Replace 'YourSolution.sln' with the actual solution file name
+      run: nuget restore upos-device-simulation.sln  
     
     - name: POS
       run: dotnet add package Microsoft.PointOfService
-     
-
-      # continue-on-error: true
+      continue-on-error: true
       
-    # - name: Build the project
-    #   run: msbuild /p:Configuration=Release upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
-    #   continue-on-error: true
-
     - name: Code Lint Check
       run: npm run lint
       continue-on-error: true
-      
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
-      # with:
-      #   msbuild-version: 16.0
         
     - name: Build Project
-      run: msbuild /p:Configuration=Release upos-device-simulation.sln  
-
-    # - name: SonarQube Scan
-    #   run: |
-    #     npm install -g sonarqube-scanner
-    #     sonar-scanner \
-    #     -Dsonar.host.url="sonarqube.hyosung.com:9000" \
-    #     -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
-    #     -Dsonar.projectKey="upos-background-service" \
-    #     -Dsonar.sources=.
-    #   env:
-    #     # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  
-    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
+      run: msbuild /p:Configuration=Release upos-device-simulation.sln
+      continue-on-error: true
 
     - name: Build Docker image
       run: docker build -t upos-background-service .
       continue-on-error: true
 
-    # - name: Run Tests
-    #   run: npm test 
     
