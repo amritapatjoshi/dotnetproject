@@ -40,7 +40,7 @@ jobs:
         dotnet add package Microsoft.PointOfService
         # mkdir -p $GITHUB_WORKSPACE/YourProjectFolder
         # cp "C:\Program Files (x86)\Microsoft Point Of Service\SDK\Microsoft.PointOfService.dll" $GITHUB_WORKSPACE/dotnetproject/
-      working-directory: dotnetproject
+      # working-directory: dotnetproject
       continue-on-error: true
     
     # - name: POS
