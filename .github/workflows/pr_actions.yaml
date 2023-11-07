@@ -32,10 +32,7 @@ jobs:
 
     # - name: Set up .NET Framework
     #   uses: actions/setup-dotnet@v2
-
-    # - name: Check .NET Framework version
-    #   run: dotnet --version  
-    #   continue-on-error: true      
+    
       
     # - name: Restore dependencies
     #   run: nuget restore upos-device-simulation.sln  
