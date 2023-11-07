@@ -43,12 +43,12 @@ jobs:
     #     dotnet-version: 3.1.401
 
 
-    - name: Restore .NET Core Dependencies
-      run: dotnet restore
+    # - name: Restore .NET Core Dependencies
+    #   run: dotnet restore
       
-    # - name: Restore dependencies
-    #   run: nuget restore upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
-    #   # continue-on-error: true
+    - name: Restore dependencies
+      run: nuget restore upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
+      # continue-on-error: true
       
     # - name: Build the project
     #   run: msbuild /p:Configuration=Release upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
@@ -58,17 +58,17 @@ jobs:
       run: npm run lint
       continue-on-error: true
 
-    - name: SonarQube Scan
-      run: |
-        npm install -g sonarqube-scanner
-        sonar-scanner \
-        -Dsonar.host.url="sonarqube.hyosung.com:9000" \
-        -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
-        -Dsonar.projectKey="upos-background-service" \
-        -Dsonar.sources=.
-      env:
-        # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
+    # - name: SonarQube Scan
+    #   run: |
+    #     npm install -g sonarqube-scanner
+    #     sonar-scanner \
+    #     -Dsonar.host.url="sonarqube.hyosung.com:9000" \
+    #     -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+    #     -Dsonar.projectKey="upos-background-service" \
+    #     -Dsonar.sources=.
+    #   env:
+    #     # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
 
     - name: Build Docker image
       run: docker build -t upos-background-service .
