@@ -21,21 +21,21 @@ jobs:
         ./gitleaks-linux-amd64 -o gitleaks-report.json
       continue-on-error: true
 
-    # - name: Install .NET Framework
-    #   run: |
-    #     choco install dotnetfx -y
-    #   continue-on-error: true
+    - name: Install .NET Framework
+      run: |
+        choco install dotnetfx -y
+      continue-on-error: true
 
-    # - name: Set up .NET Framework
-    #   uses: actions/setup-dotnet@v2
-    #   with:
-    #     dotnet-version: 4.8  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
-    #   # continue-on-error: true
-
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1
+    - name: Set up .NET Framework
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 3.1.401
+        dotnet-version: 4.8  # Specify the .NET Framework version you want to use (e.g., 4.8.1)
+      # continue-on-error: true
+
+    # - name: Setup .NET Core SDK
+    #   uses: actions/setup-dotnet@v1
+    #   with:
+    #     dotnet-version: 3.1.401
 
 
     - name: Restore .NET Core Dependencies
