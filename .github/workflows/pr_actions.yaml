@@ -38,9 +38,9 @@ jobs:
     - name: Install Microsoft.PointOfService Package and Copy DLL
       run: |
         dotnet add package Microsoft.PointOfService
-        mkdir -p $GITHUB_WORKSPACE/YourProjectFolder
-        cp "C:\Program Files (x86)\Microsoft Point Of Service\SDK\Microsoft.PointOfService.dll" $GITHUB_WORKSPACE/dotnetproject/
-      working-directory: $GITHUB_WORKSPACE/dotnetproject
+        # mkdir -p $GITHUB_WORKSPACE/YourProjectFolder
+        # cp "C:\Program Files (x86)\Microsoft Point Of Service\SDK\Microsoft.PointOfService.dll" $GITHUB_WORKSPACE/dotnetproject/
+      working-directory: C:\Program Files (x86)
       continue-on-error: true
     
     # - name: POS
