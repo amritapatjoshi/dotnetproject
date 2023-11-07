@@ -34,10 +34,18 @@ jobs:
       
     - name: Restore dependencies
       run: nuget restore upos-device-simulation.sln  
-    
-    - name: POS
-      run: dotnet add package Microsoft.PointOfService
+
+    - name: Install Microsoft.PointOfService Package and Copy DLL
+      run: |
+        dotnet add package Microsoft.PointOfService
+        mkdir -p $GITHUB_WORKSPACE/YourProjectFolder
+        cp "C:\Program Files (x86)\Microsoft Point Of Service\SDK\Microsoft.PointOfService.dll" $GITHUB_WORKSPACE/dotnetproject/
+      working-directory: $GITHUB_WORKSPACE/dotnetproject
       continue-on-error: true
+    
+    # - name: POS
+    #   run: dotnet add package Microsoft.PointOfService
+    #   continue-on-error: true
       
     - name: Code Lint Check
       run: npm run lint
