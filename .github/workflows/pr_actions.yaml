@@ -59,6 +59,17 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
       continue-on-error: true
 
+    - name: Download Microsoft Point of Service
+      run: |
+         # Download POS for .NET using PowerShell
+         Invoke-WebRequest -Uri "https://www.microsoft.com/en-us/download/details.aspx?id=55758/POSForDotNet.msi" -OutFile "POSForDotNet.msi" 
+         continue-on-error: true
+
+    - name: Install Microsoft Point of Service
+      run: |
+        msiexec /i POSForDotNet.msi /quiet
+        continue-on-error: true
+
     - name: Restore Packages
       run: nuget restore upos-device-simulation.sln
       continue-on-error: true
