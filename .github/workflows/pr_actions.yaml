@@ -47,7 +47,7 @@ jobs:
     #   run: dotnet restore
       
     - name: Restore dependencies
-      run: nuget restore upos-device-solution.sln  # Replace 'YourSolution.sln' with the actual solution file name
+      run: nuget restore upos-device-simulation.sln  # Replace 'YourSolution.sln' with the actual solution file name
       # continue-on-error: true
       
     # - name: Build the project
