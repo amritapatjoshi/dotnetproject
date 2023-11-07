@@ -59,26 +59,28 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
       continue-on-error: true
 
-    - name: Download Microsoft Point of Service
-      run: |
-         # Download POS for .NET using PowerShell
-         # Invoke-WebRequest -Uri "https://github.com/username/repository/releases/download/v1.14.1/POSForDotNet.msi" -OutFile "POSForDotNet.msi"
-         # dotnet add package Microsoft.PointOfService --version 1.14.1
-         dotnet add src/upos-device-simulation-console/upos-device-simulation-console.csproj package Microsoft.PointOfService --version 1.14.1
-         dotnet add src/upos-device-simulation/upos-device-simulation.csproj package Microsoft.PointOfService --version 1.14.1
-      continue-on-error: true
+    # - name: Download Microsoft Point of Service
+    #   run: |
+    #      # Download POS for .NET using PowerShell
+    #      # Invoke-WebRequest -Uri "https://github.com/username/repository/releases/download/v1.14.1/POSForDotNet.msi" -OutFile "POSForDotNet.msi"
+    #      # dotnet add package Microsoft.PointOfService --version 1.14.1
+    #      dotnet add src/upos-device-simulation-console/upos-device-simulation-console.csproj package Microsoft.PointOfService --version 1.14.1
+    #      dotnet add src/upos-device-simulation/upos-device-simulation.csproj package Microsoft.PointOfService --version 1.14.1
+    #   continue-on-error: true
 
-    - name: Install Microsoft Point of Service
-      run: |
-        msiexec /i POSForDotNet.msi /quiet
-        continue-on-error: true
+    # - name: Install Microsoft Point of Service
+    #   run: |
+    #     msiexec /i POSForDotNet.msi /quiet
+    #     continue-on-error: true
 
     - name: Restore Packages
       run: nuget restore upos-device-simulation.sln
       continue-on-error: true
 
     - name: Build solution
-      run: msbuild upos-device-simulation.sln -t:rebuild -property:Configuration=Release
+      run: |
+        dotnet clean upos-device-simulation.sln
+        msbuild upos-device-simulation.sln -t:rebuild -property:Configuration=Release
       continue-on-error: true
       
     - name: Code Lint Check
