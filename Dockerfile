@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . ./
 
 # Build the .NET Framework application
-RUN msbuild /p:Configuration=Release
+RUN msbuild /p:Configuration=Release upos-device-simulation.sln
 
 # Expose the port the application will run on
 EXPOSE 3000
