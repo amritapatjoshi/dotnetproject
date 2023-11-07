@@ -58,6 +58,18 @@ jobs:
       run: npm run lint
       continue-on-error: true
 
+    - name: SonarQube Scan
+      run: |
+        npm install -g sonarqube-scanner
+        sonar-scanner \
+        -Dsonar.host.url="sonarqube.hyosung.com:9000" \
+        -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+        -Dsonar.projectKey="upos-background-service" \
+        -Dsonar.sources=.
+      env:
+        # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
+
     - name: Build Docker image
       run: docker build -t upos-background-service .
       continue-on-error: true
