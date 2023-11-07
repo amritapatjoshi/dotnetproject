@@ -46,9 +46,11 @@ jobs:
     #   run: dotnet restore
       
     - name: Restore dependencies
-      run: |
-           nuget restore upos-device-simulation.sln  # Replace 'YourSolution.sln' with the actual solution file name
-           dotnet add package Microsoft.PointOfService
+      run: nuget restore upos-device-simulation.sln  # Replace 'YourSolution.sln' with the actual solution file name
+    
+    - name: POS
+      run: dotnet add package Microsoft.PointOfService
+     
 
       # continue-on-error: true
       
