@@ -16,9 +16,8 @@ jobs:
     
     - name: Run GitLeaks Scan
       run: |
-        wget https://github.com/zricethezav/gitleaks/releases/download/v7.6.0/gitleaks-linux-amd64
-        chmod +x gitleaks-linux-amd64
-        ./gitleaks-linux-amd64 -o gitleaks-report.json
+         Invoke-WebRequest -Uri https://github.com/zricethezav/gitleaks/releases/download/v7.6.0/gitleaks-windows-amd64.exe -OutFile gitleaks.exe
+         .\gitleaks.exe -o gitleaks-report.json
       continue-on-error: true
 
     - name: Install .NET Framework
@@ -47,7 +46,10 @@ jobs:
     #   run: dotnet restore
       
     - name: Restore dependencies
-      run: nuget restore upos-device-simulation.sln  # Replace 'YourSolution.sln' with the actual solution file name
+      run: |
+           nuget restore upos-device-simulation.sln  # Replace 'YourSolution.sln' with the actual solution file name
+           dotnet add package Microsoft.PointOfService
+
       # continue-on-error: true
       
     # - name: Build the project
