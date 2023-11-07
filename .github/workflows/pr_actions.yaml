@@ -20,40 +20,60 @@ jobs:
          .\gitleaks.exe -o gitleaks-report.json
       continue-on-error: true
 
-    - name: Install .NET Framework
-      run: |
-        choco install dotnetfx -y
-      continue-on-error: true
-
-    - name: Set up .NET Framework
-      uses: actions/setup-dotnet@v2
-
-    - name: Check .NET Framework version
-      run: dotnet --version  
-      continue-on-error: true      
-      
-    - name: Restore dependencies
-      run: nuget restore upos-device-simulation.sln  
-
-    - name: Install Microsoft.PointOfService Package and Copy DLL
-      run: |
-        dotnet add package Microsoft.PointOfService
-        # mkdir -p $GITHUB_WORKSPACE/YourProjectFolder
-        # cp "C:\Program Files (x86)\Microsoft Point Of Service\SDK\Microsoft.PointOfService.dll" $GITHUB_WORKSPACE/dotnetproject/
-      # working-directory: dotnetproject
-      continue-on-error: true
-    
-    # - name: POS
-    #   run: dotnet add package Microsoft.PointOfService
+    # - name: Install .NET Framework
+    #   run: |
+    #     choco install dotnetfx -y
     #   continue-on-error: true
+
+    # - name: Set up .NET Framework
+    #   uses: actions/setup-dotnet@v2
+
+    # - name: Check .NET Framework version
+    #   run: dotnet --version  
+    #   continue-on-error: true      
+      
+    # - name: Restore dependencies
+    #   run: nuget restore upos-device-simulation.sln  
+
+    # - name: Install Microsoft.PointOfService Package and Copy DLL
+    #   run: |
+    #     dotnet add package Microsoft.PointOfService
+    #     # mkdir -p $GITHUB_WORKSPACE/YourProjectFolder
+    #     # cp "C:\Program Files (x86)\Microsoft Point Of Service\SDK\Microsoft.PointOfService.dll" $GITHUB_WORKSPACE/dotnetproject/
+    #   # working-directory: dotnetproject
+    #   continue-on-error: true
+    
+    # # - name: POS
+    # #   run: dotnet add package Microsoft.PointOfService
+    # #   continue-on-error: true
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+      continue-on-error: true
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+      continue-on-error: true
+  
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.1
+      continue-on-error: true
+
+    - name: Restore Packages
+      run: nuget restore upos-device-simulation.sln
+      continue-on-error: true
+
+    - name: Build solution
+      run: msbuild upos-device-simulation.sln -t:rebuild -property:Configuration=Release
+      continue-on-error: true
       
     - name: Code Lint Check
       run: npm run lint
       continue-on-error: true
         
-    - name: Build Project
-      run: msbuild /p:Configuration=Release upos-device-simulation.sln
-      continue-on-error: true
+    # - name: Build Project
+    #   run: msbuild /p:Configuration=Release upos-device-simulation.sln
+    #   continue-on-error: true
 
     - name: Build Docker image
       run: docker build -t upos-background-service .
